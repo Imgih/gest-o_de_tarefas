@@ -100,7 +100,7 @@ const Dashboard: React.FC = () => {
             />
             <Card.Content>
               <Text style={styles.title}>{task.titulo}</Text>
-              <Text style={styles.body}>{task.desc}</Text>
+              <Text style={styles.body}>{task.descricao}</Text>
             </Card.Content>
             <Card.Actions>
               <Button onPress={() => handleEditTask(task.titulo)}>Editar</Button>

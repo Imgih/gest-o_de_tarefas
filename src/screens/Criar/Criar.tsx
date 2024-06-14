@@ -18,20 +18,20 @@ const Criar: React.FC = () => {
 
   const [titulo, setTitulo] = useState<string>("");
   const [materia, setMateria] = useState<string>("");
-  const [desc, setDesc] = useState<string>("");
+  const [descricao, setDescricao] = useState<string>("");
   const [prof, setProf] = useState<string>("");
   const [data, setData] = useState<string>("");
   const [completo, setCompleto] = useState<string>(""); 
 
   const handleSave = async () => {
-    if (!titulo || !materia || !desc) {
+    if (!titulo || !materia || !descricao) {
       Alert.alert("Erro", "Todos os campos são obrigatórios!");
       return;
     }
 
     const newTask: Tarefa = {
       titulo: titulo,
-      desc: desc,
+      descricao: descricao,
       materia: materia,
       prof: prof,
       data: data,
@@ -77,8 +77,8 @@ const Criar: React.FC = () => {
           placeholder="Descrição"
           multiline
           numberOfLines={4}
-          value={desc}
-          onChangeText={setDesc}
+          value={descricao}
+          onChangeText={setDescricao}
         />
         <TextInput
           style={styles.input}

@@ -3,7 +3,7 @@ import { StringBuilderUtils } from "../utils/StringBuilderUtils";
 
 export type Tarefa = {
   titulo: string;
-  desc: string;
+  descricao: string;
   materia: string;
   prof: string;
   data: string;
@@ -20,21 +20,21 @@ export default class TaskRepository {
   private async up(): Promise<void> {
     const sb: StringBuilderUtils = new StringBuilderUtils();
     sb.append(`CREATE TABLE IF NOT EXISTS ${this.tableName} (`);
-    sb.append("titulo TEXT PRIMARY KEY NOT NULL, ");
-    sb.append("desc TEXT NOT NULL, ");
-    sb.append("materia TEXT NOT NULL, ");
-    sb.append("prof TEXT NOT NULL, ");
-    sb.append("data TEXT NOT NULL, ");
-    sb.append("completo TEXT NOT NULL);");
+    sb.append(`titulo TEXT PRIMARY KEY NOT NULL, `);
+    sb.append(`descricao TEXT NOT NULL, `);
+    sb.append(`materia TEXT NOT NULL, `);
+    sb.append(`prof TEXT NOT NULL, `);
+    sb.append(`data TEXT NOT NULL, `);
+    sb.append(`completo TEXT NOT NULL);`);
     const sql: string = sb.toString();
     await executeTransaction(sql);
   }
 
   public async create(task: Tarefa): Promise<string | undefined> {
-    const sql = `INSERT INTO ${this.tableName} (titulo, desc, materia, prof, data, completo) VALUES (?, ?, ?, ?, ?, ?)`;
+    const sql = `INSERT INTO ${this.tableName} (titulo, descricao, materia, prof, data, completo) VALUES (?, ?, ?, ?, ?, ?)`;
     const args: string[] = [
       task.titulo,
-      task.desc,
+      task.descricao,
       task.materia,
       task.prof,
       task.data,
@@ -64,7 +64,7 @@ export default class TaskRepository {
       const task = resultSet.rows.item(i);
       tasks.push({
         titulo: task.titulo,
-        desc: task.desc,
+        descricao: task.descricao,
         materia: task.materia,
         prof: task.prof,
         data: task.data,
@@ -75,9 +75,9 @@ export default class TaskRepository {
   }
 
   public async updateTask(task: Tarefa): Promise<void> {
-    const sql = `UPDATE ${this.tableName} SET desc = ?, materia = ?, prof = ?, data = ?, completo = ? WHERE titulo = ?`;
+    const sql = `UPDATE ${this.tableName} SET descricao = ?, materia = ?, prof = ?, data = ?, completo = ? WHERE titulo = ?`;
     const args: string[] = [
-      task.desc,
+      task.descricao,
       task.materia,
       task.prof,
       task.data,
@@ -110,7 +110,7 @@ export default class TaskRepository {
         const task = resultSet.rows.item(0);
         return {
           titulo: task.titulo,
-          desc: task.desc,
+          descricao: task.descricao,
           materia: task.materia,
           prof: task.prof,
           data: task.data,

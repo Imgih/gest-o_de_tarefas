@@ -60,9 +60,9 @@ const TaskDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
       {taskDetails ? (
         <View>
           <Text style={styles.title}>Título: {taskDetails.titulo}</Text>
-          <Text style={styles.text}>Descrição: {taskDetails.desc}</Text>
+          <Text style={styles.text}>Descrição: {taskDetails.descricao}</Text>
           <Text style={styles.text}>Matéria: {taskDetails.materia}</Text>
-          <Text style={styles.text}>Professor: {taskDetails.prof}</Text>
+          <Text style={styles.text}>Professor: {taskDetails.professor}</Text>
           <Text style={styles.text}>Data: {taskDetails.data}</Text>
           <Text style={styles.text}>Status: {taskDetails.completo}</Text>
           <Button title="Editar" onPress={handleEditTask} />
