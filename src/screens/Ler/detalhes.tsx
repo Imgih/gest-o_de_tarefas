@@ -8,7 +8,7 @@ type RootStackParamList = {
   Home: undefined;
   Read: undefined;
   Criar: undefined;
-  Editar: { taskId?: number; taskTitle?: string };
+  Editar: { taskTitle?: string };
   Pesquisar: undefined;
   Detalhes: { taskTitle: string };
 };
@@ -33,9 +33,9 @@ const TaskDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
         const taskRepo = new TaskRepository();
         const task = await taskRepo.getTaskByTitle(taskTitle);
         setTaskDetails(task);
-        setLoading(false);
       } catch (error) {
         console.error('Erro ao buscar detalhes da tarefa:', error);
+      } finally {
         setLoading(false);
       }
     };
@@ -43,7 +43,7 @@ const TaskDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
     fetchTaskDetails();
   }, [taskTitle]);
 
-  const handleEditTask = (taskTitle: string) => {
+  const handleEditTask = () => {
     navigation.navigate('Editar', { taskTitle });
   };
 
@@ -65,7 +65,7 @@ const TaskDetailsScreen: React.FC<Props> = ({ route, navigation }) => {
           <Text style={styles.text}>Professor: {taskDetails.prof}</Text>
           <Text style={styles.text}>Data: {taskDetails.data}</Text>
           <Text style={styles.text}>Status: {taskDetails.completo}</Text>
-          <Button title="Editar" onPress={() => handleEditTask(taskTitle)} />
+          <Button title="Editar" onPress={handleEditTask} />
         </View>
       ) : (
         <Text>Nenhuma tarefa encontrada com o título {taskTitle}</Text>

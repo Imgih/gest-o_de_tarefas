@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView, StatusBar, StyleSheet, Text, View, TextInput } from "react-native";
+import { ScrollView, StatusBar, StyleSheet, Text, View, TextInput, TouchableOpacity } from "react-native";
 import { Avatar, Button, Card, Appbar } from "react-native-paper";
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -10,13 +10,13 @@ interface LeftContentProps {
   size: number;
 }
 
-const LeftContent: React.FC<LeftContentProps> = (props) => <Avatar.Icon {...props} icon="folder" />;
+const LeftContent: React.FC<LeftContentProps> = ({ size }) => <Avatar.Icon size={size} icon="folder" />;
 
 type RootStackParamList = {
   Dashboard: undefined;
-  TaskDetails: { taskId: number };
+  TaskDetails: { taskTitle?: string }; // Alterado para usar taskTitle
   AddTask: undefined;
-  EditTask: { taskId: number };
+  EditTask: { taskTitle?: string }; // Alterado para usar taskTitle
   Home: undefined;  // Adicionando a rota Home para a navegação
 };
 
@@ -30,10 +30,14 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     const fetchTasks = async () => {
-      const taskRepo = new TaskRepository();
-      const fetchedTasks = await taskRepo.listTasks();
-      setTasks(fetchedTasks);
-      setFilteredTasks(fetchedTasks);
+      try {
+        const taskRepo = new TaskRepository();
+        const fetchedTasks = await taskRepo.listTasks();
+        setTasks(fetchedTasks);
+        setFilteredTasks(fetchedTasks);
+      } catch (error) {
+        console.error('Erro ao buscar tarefas:', error);
+      }
     };
 
     fetchTasks();
@@ -47,8 +51,26 @@ const Dashboard: React.FC = () => {
     );
   }, [searchQuery, tasks]);
 
-  const handleCardPress = (taskId: number) => {
-    navigation.navigate('TaskDetails', { taskId });
+  const handleCardPress = (taskTitle: string) => {
+    navigation.navigate('TaskDetails', { taskTitle: taskTitle }); // Passando taskTitle
+  };
+
+  const handleEditTask = (taskTitle: string) => {
+    navigation.navigate('EditTask', { taskTitle: taskTitle }); // Passando taskTitle
+  };
+
+  const handleDeleteTask = async (taskTitle: string) => {
+    try {
+      const taskRepo = new TaskRepository();
+      await taskRepo.deleteTaskByTitle(taskTitle);
+      const updatedTasks = tasks.filter(task => task.titulo !== taskTitle);
+      setTasks(updatedTasks);
+      setFilteredTasks(updatedTasks);
+      alert('Tarefa deletada com sucesso!');
+    } catch (error) {
+      console.error('Erro ao deletar tarefa:', error);
+      alert('Erro ao deletar tarefa. Por favor, tente novamente.');
+    }
   };
 
   return (
@@ -71,20 +93,19 @@ const Dashboard: React.FC = () => {
       </View>
       <ScrollView style={styles.container}>
         {filteredTasks.map((task) => (
-          <Card key={task.id} style={styles.cardBox} onPress={() => handleCardPress(task.id!)}>
+          <Card key={task.titulo} style={styles.cardBox}>
             <Card.Title
-              
               title={task.materia}
-              left={(props) => <LeftContent {...props} />}
+              left={() => <LeftContent size={40} />}
             />
             <Card.Content>
               <Text style={styles.title}>{task.titulo}</Text>
               <Text style={styles.body}>{task.desc}</Text>
             </Card.Content>
             <Card.Actions>
-              <Button onPress={() => navigation.navigate('EditTask', { taskId: task.id! })}>Editar</Button>
-              <Button onPress={() => alert('Deletar tarefa')}>Deletar</Button>
-              <Button onPress={() => handleCardPress(task.id!)}>Ver Mais</Button>
+              <Button onPress={() => handleEditTask(task.titulo)}>Editar</Button>
+              <Button onPress={() => handleDeleteTask(task.titulo)}>Deletar</Button>
+              <Button onPress={() => handleCardPress(task.titulo)}>Ver Mais</Button>
             </Card.Actions>
           </Card>
         ))}

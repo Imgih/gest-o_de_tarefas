@@ -14,14 +14,14 @@ type NavigationProp = StackNavigationProp<RootStackParamList, 'homescreen'>;
 const Criar: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
   const { colors } = useTheme();
-  const taskRepository = new TaskRepository(); // Instância do TaskRepository
+  const taskRepository = new TaskRepository(); 
 
   const [titulo, setTitulo] = useState<string>("");
   const [materia, setMateria] = useState<string>("");
   const [desc, setDesc] = useState<string>("");
   const [prof, setProf] = useState<string>("");
   const [data, setData] = useState<string>("");
-  const [completo, setCompleto] = useState<string>("0"); // Defina como "0" para não concluído
+  const [completo, setCompleto] = useState<string>(""); 
 
   const handleSave = async () => {
     if (!titulo || !materia || !desc) {

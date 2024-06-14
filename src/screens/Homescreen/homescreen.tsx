@@ -69,7 +69,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         </Button>
         <Button
           mode="contained"
-          icon={() => <Feather name="edit-2" size={24} color="black" />}
+          icon={() => <Feather name="edit-2" size={20} color="white" />}
           style={[styles.button, { backgroundColor: colors.primary }]}
           labelStyle={styles.buttonLabel}
           onPress={() => navigation.navigate('Editar')}

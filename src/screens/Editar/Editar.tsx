@@ -1,19 +1,18 @@
-// UpdateTask.tsx
-
 import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
 import TaskRepository, { Tarefa } from '../../repository/TarefaRepository';
 
 type RootStackParamList = {
-  Dashboard: undefined;
-  TaskDetails: undefined;
-  UpdateTask: { taskTitle?: string };
+  Home: undefined;
+  Read: undefined;
   Criar: undefined;
-  SearchScreen: undefined;
+  Editar: { taskTitle?: string };
+  Pesquisar: undefined;
+  Detalhes: { taskTitle: string };
 };
 
-type UpdateTaskProps = StackScreenProps<RootStackParamList, 'UpdateTask'>;
+type UpdateTaskProps = StackScreenProps<RootStackParamList, 'Editar'>;
 
 const UpdateTask: React.FC<UpdateTaskProps> = ({ route, navigation }) => {
   const { taskTitle } = route.params;
@@ -53,13 +52,7 @@ const UpdateTask: React.FC<UpdateTaskProps> = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text>Edit Task</Text>
-      <TextInput
-        value={task.titulo}
-        onChangeText={(text) => setTask({ ...task, titulo: text })}
-        placeholder="Título"
-        style={styles.input}
-      />
+      <Text>Editar Tarefa</Text>
       <TextInput
         value={task.desc}
         onChangeText={(text) => setTask({ ...task, desc: text })}
