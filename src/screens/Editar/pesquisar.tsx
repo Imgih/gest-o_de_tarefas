@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert, FlatList } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert, FlatList, StatusBar } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import TaskRepository, {Tarefa} from '../../repository/TarefaRepository';// Certifique-se de importar corretamente o arquivo do repositório
+import { Appbar } from 'react-native-paper';
+import { AntDesign } from '@expo/vector-icons';
+import TaskRepository, { Tarefa } from '../../repository/TarefaRepository';
 
 type RootStackParamList = {
   Home: undefined;
@@ -21,11 +23,11 @@ type Props = {
 const SearchScreen: React.FC<Props> = ({ navigation }) => {
   const [taskTitle, setTaskTitle] = useState<string>('');
   const [searchResults, setSearchResults] = useState<Tarefa[]>([]);
-  const [isSearching, setIsSearching] = useState<boolean>(false); // Estado para controlar o estado de busca
+  const [isSearching, setIsSearching] = useState<boolean>(false);
 
   const handleSearch = async () => {
     try {
-      setIsSearching(true); // Indica que a busca está em andamento
+      setIsSearching(true);
       const taskRepo = new TaskRepository();
       const foundTask = await taskRepo.getTaskByTitle(taskTitle);
 
@@ -39,7 +41,7 @@ const SearchScreen: React.FC<Props> = ({ navigation }) => {
       console.error('Erro ao buscar tarefa:', error);
       Alert.alert('Erro', 'Erro ao buscar tarefa. Por favor, tente novamente.');
     } finally {
-      setIsSearching(false); // Finaliza a busca
+      setIsSearching(false);
     }
   };
 
@@ -47,27 +49,37 @@ const SearchScreen: React.FC<Props> = ({ navigation }) => {
     <View style={styles.resultItem}>
       <Text style={styles.resultItemText}>{item.titulo}</Text>
       <Text>{item.desc}</Text>
-      {/* Outros detalhes da tarefa podem ser mostrados aqui */}
+      <Text>{item.materia}</Text>
+      <Text>{item.prof}</Text>
+      <Text>{item.data}</Text>
+      <Text>{item.completo}</Text>
     </View>
   );
 
   return (
     <View style={styles.container}>
-      <TextInput
-        style={styles.input}
-        placeholder="Digite o título da tarefa"
-        value={taskTitle}
-        onChangeText={setTaskTitle}
-      />
-      <Button title="Buscar" onPress={handleSearch} disabled={isSearching} />
-
-      {isSearching && <Text>Buscando...</Text>}
-
+      <StatusBar barStyle="light-content" backgroundColor="#690f67" />
+      <Appbar.Header style={{ backgroundColor: '#690f67' }}>
+        <Appbar.Content title="To Do - Tarefas" titleStyle={{ color: 'white' }} />
+        <Appbar.Action icon={() => <AntDesign name="home" size={24} color="white" />} onPress={() => navigation.navigate('Home')} />
+      </Appbar.Header>
+      <View style={styles.formContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Buscar tarefa..."
+          value={taskTitle}
+          onChangeText={setTaskTitle}
+        />
+        <View style={styles.buttonContainer}>
+          <Button title="Buscar" onPress={handleSearch} disabled={isSearching} color="#690f67" />
+        </View>
+      </View>
+      {isSearching && <Text style={styles.loadingText}>Buscando...</Text>}
       <FlatList
         data={searchResults}
         renderItem={renderItem}
-        keyExtractor={(item) => item.toString()}
-        ListEmptyComponent={<Text>Nenhum resultado encontrado</Text>}
+        keyExtractor={(item) => item.titulo}
+        ListEmptyComponent={!isSearching ? <Text style={styles.emptyText}>Nenhum resultado encontrado</Text> : null}
       />
     </View>
   );
@@ -76,6 +88,9 @@ const SearchScreen: React.FC<Props> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#f0f0f0',
+  },
+  formContainer: {
     padding: 16,
   },
   input: {
@@ -85,15 +100,34 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingHorizontal: 10,
     borderRadius: 5,
+    backgroundColor: 'white',
+  },
+  buttonContainer: {
+    marginTop: 10,
+    borderRadius: 5,
+    overflow: 'hidden',
   },
   resultItem: {
     paddingVertical: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
+    backgroundColor: 'white',
+    padding: 10,
+    borderRadius: 5,
+    marginHorizontal: 16,
+    marginVertical: 5,
   },
   resultItemText: {
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  loadingText: {
+    textAlign: 'center',
+    marginVertical: 10,
+  },
+  emptyText: {
+    textAlign: 'center',
+    marginVertical: 10,
   },
 });
 

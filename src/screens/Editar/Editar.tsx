@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
+import { Appbar } from 'react-native-paper';
+import { AntDesign } from '@expo/vector-icons';
 import TaskRepository, { Tarefa } from '../../repository/TarefaRepository';
 
 type RootStackParamList = {
@@ -52,38 +54,51 @@ const UpdateTask: React.FC<UpdateTaskProps> = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text>Editar Tarefa</Text>
-      <TextInput
-        value={task.desc}
-        onChangeText={(text) => setTask({ ...task, desc: text })}
-        placeholder="Descrição"
-        style={styles.input}
-      />
-      <TextInput
-        value={task.materia}
-        onChangeText={(text) => setTask({ ...task, materia: text })}
-        placeholder="Matéria"
-        style={styles.input}
-      />
-      <TextInput
-        value={task.prof}
-        onChangeText={(text) => setTask({ ...task, prof: text })}
-        placeholder="Professor"
-        style={styles.input}
-      />
-      <TextInput
-        value={task.data}
-        onChangeText={(text) => setTask({ ...task, data: text })}
-        placeholder="Data"
-        style={styles.input}
-      />
-      <TextInput
-        value={task.completo}
-        onChangeText={(text) => setTask({ ...task, completo: text })}
-        placeholder="Completo"
-        style={styles.input}
-      />
-      <Button title="Salvar Tarefa" onPress={handleUpdate} />
+      <Appbar.Header style={{ backgroundColor: '#690f67' }}>
+        <Appbar.Action icon={() => <AntDesign name="arrowleft" size={24} color="white" />} onPress={() => navigation.goBack()} />
+        <Appbar.Content title="Editar Tarefa" titleStyle={{ color: 'white' }} />
+      </Appbar.Header>
+      <View style={styles.formContainer}>
+        <TextInput
+          value={task.titulo}
+          onChangeText={(text) => setTask({ ...task, titulo: text })}
+          placeholder="Título"
+          style={styles.input}
+        />
+        <TextInput
+          value={task.materia}
+          onChangeText={(text) => setTask({ ...task, materia: text })}
+          placeholder="Matéria"
+          style={styles.input}
+        />
+        <TextInput
+          value={task.desc}
+          onChangeText={(text) => setTask({ ...task, desc: text })}
+          placeholder="Descrição"
+          style={styles.input}
+        />
+        <TextInput
+          value={task.prof}
+          onChangeText={(text) => setTask({ ...task, prof: text })}
+          placeholder="Professor"
+          style={styles.input}
+        />
+        <TextInput
+          value={task.data}
+          onChangeText={(text) => setTask({ ...task, data: text })}
+          placeholder="Data de Entrega"
+          style={styles.input}
+        />
+        <TextInput
+          value={task.completo}
+          onChangeText={(text) => setTask({ ...task, completo: text })}
+          placeholder="Status"
+          style={styles.input}
+        />
+        <TouchableOpacity style={styles.saveButton} onPress={handleUpdate}>
+          <Text style={styles.saveButtonText}>Salvar</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -91,13 +106,30 @@ const UpdateTask: React.FC<UpdateTaskProps> = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    backgroundColor: '#f0f0f0',
+  },
+  formContainer: {
+    padding: 16,
   },
   input: {
-    borderWidth: 1,
+    height: 40,
     borderColor: '#ccc',
-    padding: 8,
-    marginVertical: 10,
+    borderWidth: 1,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    backgroundColor: 'white',
+  },
+  saveButton: {
+    backgroundColor: '#6200ee',
+    padding: 15,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  saveButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
   },
 });
 

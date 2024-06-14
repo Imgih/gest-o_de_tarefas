@@ -8,7 +8,7 @@ import TaskRepository, {Tarefa} from '../../repository/TarefaRepository';
 
 type RootStackParamList = {
   Home: undefined;
-  AgendarTarefas: undefined;
+  Pesquisar: undefined;
   Read: undefined;
   Tarefas: undefined;
   Criar: undefined;
@@ -72,7 +72,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
           icon={() => <Feather name="edit-2" size={20} color="white" />}
           style={[styles.button, { backgroundColor: colors.primary }]}
           labelStyle={styles.buttonLabel}
-          onPress={() => navigation.navigate('Editar')}
+          onPress={() => navigation.navigate('Pesquisar')}
         >
           Editar Tarefa
         </Button>

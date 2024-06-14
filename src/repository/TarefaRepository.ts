@@ -1,4 +1,3 @@
-// Importe os módulos necessários e defina o tipo Tarefa
 import { executeTransaction } from "../database/database";
 import { StringBuilderUtils } from "../utils/StringBuilderUtils";
 
@@ -21,8 +20,7 @@ export default class TaskRepository {
   private async up(): Promise<void> {
     const sb: StringBuilderUtils = new StringBuilderUtils();
     sb.append(`CREATE TABLE IF NOT EXISTS ${this.tableName} (`);
-    sb.append("id INTEGER PRIMARY KEY NOT NULL, ");
-    sb.append("titulo TEXT NOT NULL, ");
+    sb.append("titulo TEXT PRIMARY KEY NOT NULL, ");
     sb.append("desc TEXT NOT NULL, ");
     sb.append("materia TEXT NOT NULL, ");
     sb.append("prof TEXT NOT NULL, ");
@@ -32,9 +30,9 @@ export default class TaskRepository {
     await executeTransaction(sql);
   }
 
-  public async create(task: Tarefa): Promise<number | undefined> {
-    const sql = `INSERT INTO ${this.tableName} (id, titulo, desc, materia, prof, data, completo) VALUES (?, ?, ?, ?, ?, ?, ?)`;
-    const args: (string | number | null)[] = [
+  public async create(task: Tarefa): Promise<string | undefined> {
+    const sql = `INSERT INTO ${this.tableName} (titulo, desc, materia, prof, data, completo) VALUES (?, ?, ?, ?, ?, ?)`;
+    const args: string[] = [
       task.titulo,
       task.desc,
       task.materia,
@@ -46,7 +44,7 @@ export default class TaskRepository {
     try {
       const result = await executeTransaction(sql, args);
       if (result.rowsAffected > 0) {
-        return result.insertId ?? undefined;
+        return task.titulo;
       } else {
         console.error('Nenhuma linha foi inserida.');
         return undefined;
@@ -65,7 +63,6 @@ export default class TaskRepository {
     for (let i = 0; i < resultSet.rows.length; i++) {
       const task = resultSet.rows.item(i);
       tasks.push({
-
         titulo: task.titulo,
         desc: task.desc,
         materia: task.materia,
@@ -79,59 +76,52 @@ export default class TaskRepository {
 
   public async updateTask(task: Tarefa): Promise<void> {
     const sql = `UPDATE ${this.tableName} SET desc = ?, materia = ?, prof = ?, data = ?, completo = ? WHERE titulo = ?`;
-    const args: (string | number | null)[] = [
+    const args: string[] = [
       task.desc,
       task.materia,
       task.prof,
       task.data,
       task.completo,
-      task.titulo // Usando o título como critério de busca para atualização
+      task.titulo 
     ];
-    await executeTransaction(sql, args);
-  }
-
-  public async deleteTaskByTitle(title: string): Promise<void> {
-    const deleteSql: string = `DELETE FROM ${this.tableName} WHERE titulo = ?`;
-    await executeTransaction(deleteSql, [title]);
-  }
-
-  public async getTaskById(taskId: number): Promise<Tarefa | null> {
-    const sql: string = `SELECT * FROM ${this.tableName} WHERE id = ?`;
-    const resultSet = await executeTransaction(sql, [taskId]);
-
-    if (resultSet.rows.length > 0) {
-      const task = resultSet.rows.item(0);
-      return {
-
-        titulo: task.titulo,
-        desc: task.desc,
-        materia: task.materia,
-        prof: task.prof,
-        data: task.data,
-        completo: task.completo,
-      };
-    } else {
-      return null;
+    try {
+      await executeTransaction(sql, args);
+    } catch (error) {
+      console.error('Erro ao atualizar tarefa:', error);
+      throw error;
     }
   }
 
-  public async getTaskByTitle(title: string): Promise<Tarefa | null> {
-    const sql: string = `SELECT * FROM ${this.tableName} WHERE titulo = ?`;
-    const resultSet = await executeTransaction(sql, [title]);
+  public async deleteTaskByTitle(titulo: string): Promise<void> {
+    const deleteSql: string = `DELETE FROM ${this.tableName} WHERE titulo = ?`;
+    try {
+      await executeTransaction(deleteSql, [titulo]);
+    } catch (error) {
+      console.error('Erro ao deletar tarefa:', error);
+      throw error;
+    }
+  }
 
-    if (resultSet.rows.length > 0) {
-      const task = resultSet.rows.item(0);
-      return {
-    
-        titulo: task.titulo,
-        desc: task.desc,
-        materia: task.materia,
-        prof: task.prof,
-        data: task.data,
-        completo: task.completo,
-      };
-    } else {
-      return null;
+  public async getTaskByTitle(titulo: string): Promise<Tarefa | null> {
+    const sql: string = `SELECT * FROM ${this.tableName} WHERE titulo = ?`;
+    try {
+      const resultSet = await executeTransaction(sql, [titulo]);
+      if (resultSet.rows.length > 0) {
+        const task = resultSet.rows.item(0);
+        return {
+          titulo: task.titulo,
+          desc: task.desc,
+          materia: task.materia,
+          prof: task.prof,
+          data: task.data,
+          completo: task.completo,
+        };
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.error('Erro ao buscar tarefa por título:', error);
+      throw error;
     }
   }
 }
